@@ -27,9 +27,6 @@ Vagrant.configure("2") do |config|
                         libvirt__forward_mode: 'route',
                         libvirt__dhcp_enabled: false 
                    
-                        
-      vm1.vm.synced_folder "./puppet", "/puppet-test"
-
       vm1.vm.provision "shell", path: "scripts/puppet-server-install.sh"
   
       vm1.vm.provision "shell", :inline => <<-SHELL
@@ -41,14 +38,18 @@ Vagrant.configure("2") do |config|
         sudo echo "[main]" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
         sudo echo -e "certname = puppetserver\nserver = puppetserver\nenvironment = production\nruninterval = 15m" | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
       SHELL
- 
- #     vm1.vm.provision "shell", :inline => <<-SHELL
- #       cd /etc/puppetlabs/code/environments/produccion
- #       sudo /opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
- #       sudo /opt/puppetlabs/puppet/bin/r10k puppetfile install --verbose
- #       sudo /opt/puppetlabs/bin/puppet apply --environment=production /etc/puppetlabs/code/environments/production/manifests/
- #     SHELL
-  
+     
+#      vm1.vm.provision "shell", :inline => <<-SHELL
+#        cd /etc/puppetlabs/code/environments
+#        sudo mv production production.orig
+#        sudo git clone https://github.com/jinostrozam/puppet.git production
+#        cd production
+#        sudo git checkout production
+#        sudo /opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
+#        sudo /opt/puppetlabs/puppet/bin/r10k puppetfile install --verbose
+#        sudo /opt/puppetlabs/bin/puppet apply --environment=production /etc/puppetlabs/code/environments/production/manifests/
+#      SHELL
+
     end
 
     config.ssh.forward_agent = true
